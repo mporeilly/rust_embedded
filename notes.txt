@@ -1,13 +1,13 @@
 //https://www.youtube.com/watch?v=sPrG4r-zlN4   
 
-.cargo config.toml is the location for the runner file which will be executed with "cargo build or "cargo run"
+.cargo/config.toml is the location for the runner file which will be executed with "cargo build or "cargo run"
 
-memory.x defines the memory layout of the system
+memory.x defines the memory layout of the system (no idea what indicates to use it)
 
-openocd.gdb lays out the commands that are run within gdb 
+openocd.gdb lays out the commands that are run within gdb (reference in the runner within .cargo/config.toml)
 
 before running need to open up the debugger with this command (in any place): openocd -f interface/stlink-v2-1.cfg -f target/stm32f3x.cfg
 
-
+documentation can be viewed offline by "cargo doc --open --package stm32f3-discovery" - very useful
 
 to view binary info: cargo readobj --target thumbv7em-none-eabihf --bin embedded_hello -- --file-header
