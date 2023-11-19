@@ -4,3 +4,4 @@ layout asm
 layout split
 load
 monitor arm semihosting enable
+break main
