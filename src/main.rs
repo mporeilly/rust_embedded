@@ -5,7 +5,7 @@ use panic_halt as _; // required as if the controller faces a error needs way to
 
 use cortex_m_rt::entry; // since there is no "main" function need to specify the entry point to the program
 use cortex_m_semihosting::hprintln; // allows communication to host; picked up by openOCD so not everything is in the gdb
-use stm32f3_discovery::{stm32f3xx_hal::{self as hal, pac, prelude::*}, switch_hal::{IntoSwitch, OutputSwitch}}; // need to access the hardware access layer as not advanced enough to start using unsafe to use registers
+use stm32f3_discovery::{stm32f3xx_hal::{self as hal, pac, prelude::*}, switch_hal::{IntoSwitch, OutputSwitch, ToggleableOutputSwitch}}; // need to access the hardware access layer as not advanced enough to start using unsafe to use registers
 
 //const MAGNETOMETER: u8 = 0b0011_1100;       //using the WRONG address for the magnetometer has the read error out in openOCD
 const MAGNETOMETER: u8 = 0b0001_1110; // Peripheral/slave address for LSM303AGR chip (confirmed when running that this is the correct based on the WHO_AM_I_REG RESPONSE)
@@ -92,7 +92,7 @@ fn main() -> ! {
     let a = 32f32;
     let b = 4f32;
     let c = b / a;
-    hprintln!("answer {:?}", c).unwrap();
+    
 
     loop {
         let mut buffer = [0u8; 1];
@@ -105,6 +105,7 @@ fn main() -> ! {
             Ok(_) => hprintln!("0x{:02x} - 0b{:?}", WHO_AM_I_REG, buffer).unwrap(),
             Err(_) => hprintln!("Error reading").unwrap(),
         }
-        led13.on().unwrap();
+        led13.toggle().unwrap();
+        hprintln!("answer {:?}", c).unwrap();
     }
 }

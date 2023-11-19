@@ -11,3 +11,5 @@ before running need to open up the debugger with this command (in any place): op
 documentation can be viewed offline by "cargo doc --open --package stm32f3-discovery" - very useful
 
 to view binary info: cargo readobj --target thumbv7em-none-eabihf --bin embedded_hello -- --file-header
+
+.gbdinit has an example of the config to make it more friendly
