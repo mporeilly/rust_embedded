@@ -1,6 +1,8 @@
 //https://www.youtube.com/watch?v=sPrG4r-zlN4   
 
-.cargo/config.toml is the location for the runner file which will be executed with "cargo build or "cargo run"
+Purpose of this document: https://imgur.com/1h3K2TT/
+
+.cargo/config.toml is the location for the runner file which will be executed with "cargo build or "cargo run" also includes the target
 
 memory.x defines the memory layout of the system (no idea what indicates to use it)
 
@@ -12,4 +14,29 @@ documentation can be viewed offline by "cargo doc --open --package stm32f3-disco
 
 to view binary info: cargo readobj --target thumbv7em-none-eabihf --bin embedded_hello -- --file-header
 
-.gbdinit has an example of the config to make it more friendly
+.gbdinit example included of the config to make it more friendly
+
+2023-12-23
+    - going to try to embed a file in the executable. I will use the advent of code day 1 part 1 example test
+    - unable to compile as there isn't an allocator setup since there the standard library is exceuted as I am using the core library
+        error: no global memory allocator found but one is required; link to std or add `#[global_allocator]` to a static item that implements the GlobalAlloc trait
+        https://blog.rust-lang.org/2018/08/02/Rust-1.28.html#global-allocators
+            can't use "use std::alloc::System;" errors as the std library is excluded from the program by the "#![no_std]
+        https://github.com/rust-embedded/embedded-alloc
+        https://os.phil-opp.com/allocator-designs/
+2024-01-14
+    - going to drop in the following:
+        https://github.com/rust-embedded/embedded-alloc
+
+        errors:
+            |
+            21 | use embedded_alloc::LlffHeap as Heap;
+            |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ no `LlffHeap` in the root
+            
+       Unable to determine what the error is caused by not sure if overlooking something simple
+            
+2024-01-16 
+	- going to back track from the previous and try the following:
+		https://github.com/rust-embedded/cortex-m-quickstart/blob/master/examples/allocator.rs
+		
+        

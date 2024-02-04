@@ -1,6 +1,9 @@
 #![no_main]
 #![no_std]
 
+extern crate alloc;// added so vec can be used and the 
+use alloc::vec::Vec;    // added so vec can be used
+
 use panic_halt as _; // required as if the controller faces a error needs way to call panic; still not sure how that works as the "_" means it is unused so something to look into
 
 use cortex_m_rt::entry; // since there is no "main" function need to specify the entry point to the program
@@ -14,7 +17,9 @@ const WHO_AM_I_REG: u8 = 0x4f; // Device id address
 // Addresses of the magnetometer's registers page 45 of the LSM303AGR chip.pdf
 //const 
 
-#[entry]
+
+
+#[entry] // need to mark the entry
 fn main() -> ! {
     // function does not return
     hprintln!("Hello, world!").unwrap(); // unwrap if there is an error then need it to crash as something is very wrong
@@ -92,8 +97,37 @@ fn main() -> ! {
     let a = 32f32;
     let b = 4f32;
     let c = b / a;
-    
 
+    // embed file
+    let filecontents = include_bytes!("../aocday01t1"); // what is the increase in the binary???
+    hprintln!("{:?}",filecontents).unwrap();
+
+
+    // initializing the allocator
+    
+    //vector for each lines values (requires allocator hence the addition above)
+    let sum_vector = Vec::new();
+    let result_vector = Vec::new();
+
+    // want to pull the numbers out
+    for i in 0..filecontents.len(){
+        if filecontents[i] >= 48 && filecontents[i] <= 57{
+            hprintln!("found number").unwrap();
+            sum_vector.push(filecontents[i]);
+
+        } // need to filter based on ascii number cutoff 48 is "0" and 57 is "9"
+        if filecontents[i] == b'\n'{
+            if sum_vector.len() < 3{
+                result_vector.push(sum_vector.iter().sum());
+            }else {
+                result_vector.push(sum_vector[0]+sum_vector[sum_vector.len()]);
+            }
+            sum_vector.clear();
+
+        }
+    }
+    let finalresult: u8 = result_vector.iter().sum();
+    hprintln!("Value of the input is: {:?}", finalresult).unwrap();
     loop {
         let mut buffer = [0u8; 1];
         /* originally had the buffer as [0u8, 1] but this creates a buffer (array) of two values not a single

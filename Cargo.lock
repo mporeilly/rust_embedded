@@ -132,6 +132,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "critical-section"
+version = "1.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7059fff8937831a9ae6f0fe4d658ffabf58f2ca96aa9dec1c889f936f705f216"
+
+[[package]]
+name = "embedded-alloc"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ddae17915accbac2cfbc64ea0ae6e3b330e6ea124ba108dada63646fd3c6f815"
+dependencies = [
+ "critical-section",
+ "linked_list_allocator",
+]
+
+[[package]]
 name = "embedded-dma"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -165,6 +181,7 @@ version = "0.1.0"
 dependencies = [
  "cortex-m-rt",
  "cortex-m-semihosting",
+ "embedded-alloc",
  "panic-halt",
  "stm32f3-discovery",
 ]
@@ -193,6 +210,12 @@ name = "itoa"
 version = "1.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "453ad9f582a441959e5f0d088b02ce04cfe8d51a8eaf077f12ac6d3e94164ca6"
+
+[[package]]
+name = "linked_list_allocator"
+version = "0.10.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9afa463f5405ee81cdb9cc2baf37e08ec7e4c8209442b5d72c04cfb2cd6e6286"
 
 [[package]]
 name = "lsm303dlhc"

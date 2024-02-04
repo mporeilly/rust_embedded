@@ -5,3 +5,5 @@ layout split
 load
 monitor arm semihosting enable
 break main
+break 97
+break loop
