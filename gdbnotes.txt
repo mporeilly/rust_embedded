@@ -1,0 +1,20 @@
+GDB
+https://ftp.gnu.org/old-gnu/Manuals/gdb/html_node/gdb_toc.html
+
+.gbdinit has an example of the config to make it more friendly
+
+info (b)reak
+(b)reak "line number"/"function name"
+
+(d)elete "break point number"
+
+(n)ext - Steps through a single line of code. Steps over function calls.
+(ni) - Steps through a single x86 instruction. Steps over calls.
+(s)tep - Steps through a single line of code. Steps into function calls.
+(si) - Steps through a single x86 instruction. Steps into calls.
+
+(p)rint - prints variable
+variables:
+
+info locals - local variables
+set (var)iable "variable name" = 2

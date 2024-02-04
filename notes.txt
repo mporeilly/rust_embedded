@@ -6,10 +6,15 @@ memory.x defines the memory layout of the system (no idea what indicates to use 
 
 openocd.gdb lays out the commands that are run within gdb (reference in the runner within .cargo/config.toml)
 
-before running need to open up the debugger with this command (in any place): openocd -f interface/stlink-v2-1.cfg -f target/stm32f3x.cfg
+before running need to open up the debugger with this command (in any place): "openocd -f interface/stlink-v2-1.cfg -f target/stm32f3x.cfg" or "openocd -f interface/stlink.cfg -f target/stm32f3x.cfg"
 
 documentation can be viewed offline by "cargo doc --open --package stm32f3-discovery" - very useful
 
 to view binary info: cargo readobj --target thumbv7em-none-eabihf --bin embedded_hello -- --file-header
 
-.gbdinit has an example of the config to make it more friendly
+Follow the udev updates in the "Linux - The Embedded Rust Book.pdf"
+# STM32F3DISCOVERY rev A/B - ST-LINK/V2
+ATTRS{idVendor}=="0483", ATTRS{idProduct}=="3748", TAG+="uaccess"
+
+# STM32F3DISCOVERY rev C+ - ST-LINK/V2-1
+ATTRS{idVendor}=="0483", ATTRS{idProduct}=="374b", TAG+="uaccess"

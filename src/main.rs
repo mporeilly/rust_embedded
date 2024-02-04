@@ -75,6 +75,8 @@ fn main() -> ! {
         // then need to "Section 11.4.12 - GPIO registers - Page 243 - Reference Manual"
         led13.off().unwrap();
 
+        let mut led14 = gpioe.pe14.into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper).into_active_high_switch();
+        led14.on().unwrap();
         //let mut clock = dp.TIM1.
 
 
@@ -106,6 +108,7 @@ fn main() -> ! {
             Err(_) => hprintln!("Error reading").unwrap(),
         }
         led13.toggle().unwrap();
+        led14.toggle().unwrap();
         hprintln!("answer {:?}", c).unwrap();
     }
 }
