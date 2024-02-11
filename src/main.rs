@@ -1,12 +1,46 @@
 #![no_main]
 #![no_std]
+use cortex_m_rt::entry; // since there is no "main" function need to specify the entry point to the program
+// A. START Part 1 of 2 ----------------------------------------------- //
+// A. taken from https://github.com/rust-embedded/embedded-alloc/blob/master/examples/global_alloc.rs
+extern crate alloc;// added so vec can be used
 
-extern crate alloc;// added so vec can be used and the 
 use alloc::vec::Vec;    // added so vec can be used
+
+// Linked-List First Fit Heap allocator (feature = "llff")
+//use embedded_alloc::LlffHeap as Heap;       // <--------------------------- Line Errors out... "cargo add embedded_alloc"? Yes but of course it is named" "embedded-alloc" not the underscored one
+// Two-Level Segregated Fit Heap allocator (feature = "tlsf")
+// use embedded_alloc::TlsfHeap as Heap;
+// looking at the documentation I found that there is a struct created called Heap hence the line below, this did catch that the vec's were not tagged as mutable so it gave me hope but...
+use embedded_alloc::Heap as Heap;   // causes a massive error ----> "error: linking with `rust-lld` failed: exit status: 1"
+// from the libs.rs within embedded_alloc: 
+/*      ...
+        #[cfg(feature = "llff")]
+        pub use llff::Heap as LlffHeap;
+        ...
+*/
+// but the language server seems to not like "LlffHeap" or "TlsfHeap" as the only one to allow it to see past to the missing "mut" was just "...::Heap"
+// at this point I can't even get the example (https://github.com/rust-embedded/embedded-alloc/blob/master/examples/global_alloc.rs) to run in a clean directory
+// two possible problems I think right now is it the naming of the heap structs (unlikley) that is causing this issue or is it related to the "config.toml" and the "memory.x" (most likley based on the errors I'm getting)
+// tried verifying the "memory.x" file is correctly written but the discovery example doesn't seem to have it 
+// in reviewing "https://github.com/jhford/rust-stm32f303-binary-counter/blob/master/memory.x" I might need to dig further into the memory layout
+// pasted the error into "error_likely_memory_related"
+//
+// error "rust-lld: warning: address (0x8012378) of section .rodata is not a multiple of alignment (16)"
+//
+// googling I found "https://github.com/rust-embedded/cortex-m-rt/issues/26" however this is a closed issue on an archived repo but it looks to confirm memory issue
+//
+// this (https://docs.rust-embedded.org/cortex-m-quickstart/cortex_m_rt/index.html) breaks down how everything is organized
+
+
+#[global_allocator]
+static HEAP: Heap = Heap::empty();
+
+// A. END Part 1 of 2 ---------------------------------------------- //
 
 use panic_halt as _; // required as if the controller faces a error needs way to call panic; still not sure how that works as the "_" means it is unused so something to look into
 
-use cortex_m_rt::entry; // since there is no "main" function need to specify the entry point to the program
+//use cortex_m_rt::entry; // since there is no "main" function need to specify the entry point to the program
 use cortex_m_semihosting::hprintln; // allows communication to host; picked up by openOCD so not everything is in the gdb
 use stm32f3_discovery::{stm32f3xx_hal::{self as hal, pac, prelude::*}, switch_hal::{IntoSwitch, OutputSwitch, ToggleableOutputSwitch}}; // need to access the hardware access layer as not advanced enough to start using unsafe to use registers
 
@@ -103,11 +137,21 @@ fn main() -> ! {
     hprintln!("{:?}",filecontents).unwrap();
 
 
+    // A. START Part 2 of 2 ----------------------------------------------- //
+
     // initializing the allocator
+    // Initialize the allocator BEFORE you use it
+    {
+        use core::mem::MaybeUninit;
+        const HEAP_SIZE: usize = 1024;
+        static mut HEAP_MEM: [MaybeUninit<u8>; HEAP_SIZE] = [MaybeUninit::uninit(); HEAP_SIZE];
+        unsafe { HEAP.init(HEAP_MEM.as_ptr() as usize, HEAP_SIZE) }
+    }
+    // A. END Part 2 of 2 ----------------------------------------------- //
     
     //vector for each lines values (requires allocator hence the addition above)
-    let sum_vector = Vec::new();
-    let result_vector = Vec::new();
+    let mut sum_vector = Vec::new();
+    let mut result_vector = Vec::new();
 
     // want to pull the numbers out
     for i in 0..filecontents.len(){
